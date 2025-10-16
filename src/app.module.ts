@@ -4,6 +4,7 @@ import { Album, AlbumSchema } from './schemas/album.schema';
 import { Track, TrackSchema } from './schemas/track.schema';
 import { ArtistsController } from './artists/artists.controller';
 import { Module } from '@nestjs/common';
+import { AlbumsController } from './albums/albums.controller';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { Module } from '@nestjs/common';
       { name: Track.name, schema: TrackSchema },
     ]),
   ],
-  controllers: [ArtistsController],
+  controllers: [ArtistsController, AlbumsController],
   providers: [],
 })
 export class AppModule {}
