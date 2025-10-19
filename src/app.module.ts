@@ -6,6 +6,7 @@ import { ArtistsController } from './artists/artists.controller';
 import { Module } from '@nestjs/common';
 import { AlbumsController } from './albums/albums.controller';
 import { TracksController } from './tracks/tracks.controller';
+import { User, UserSchema } from './schemas/user.schema';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { TracksController } from './tracks/tracks.controller';
       { name: Artist.name, schema: ArtistSchema },
       { name: Album.name, schema: AlbumSchema },
       { name: Track.name, schema: TrackSchema },
+      { name: User.name, schema: UserSchema },
     ]),
   ],
   controllers: [ArtistsController, AlbumsController, TracksController],

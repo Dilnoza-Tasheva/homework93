@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { Document } from 'mongoose';
 
-export type UserRole = 'admin | user';
+export type UserRole = 'admin' | 'user';
 
 export interface UserMethods {
   checkPassword(password: string): Promise<boolean>;
