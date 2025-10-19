@@ -1,5 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import { Document } from 'mongoose';
+
+export type UserRole = 'admin | user';
 
 export interface UserMethods {
   checkPassword(password: string): Promise<boolean>;
@@ -7,6 +11,7 @@ export interface UserMethods {
 }
 
 export type UserDocument = User & Document & UserMethods;
+const SALT_WORK_FACTOR = 10;
 
 @Schema()
 export class User {
@@ -25,8 +30,29 @@ export class User {
   @Prop()
   displayName: string;
 
-  @Prop({ required: true })
-  role: string;
+  @Prop({ required: true, enum: ['admin', 'user'], default: 'user' })
+  role: UserRole;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.methods.generateToken = function (this: User) {
+  this.token = crypto.randomUUID();
+};
+
+UserSchema.methods.checkPassword = function (this: User, password: string) {
+  return bcrypt.compare(password, this.password);
+};
+
+UserSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
+  const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+UserSchema.set('toJSON', {
+  transform: (_doc, ret: Partial<User>) => {
+    delete ret.password;
+    return ret;
+  },
+});
