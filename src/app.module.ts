@@ -7,6 +7,7 @@ import { Module } from '@nestjs/common';
 import { AlbumsController } from './albums/albums.controller';
 import { TracksController } from './tracks/tracks.controller';
 import { User, UserSchema } from './schemas/user.schema';
+import { UsersController } from './users/users.controller';
 
 @Module({
   imports: [
@@ -18,7 +19,12 @@ import { User, UserSchema } from './schemas/user.schema';
       { name: User.name, schema: UserSchema },
     ]),
   ],
-  controllers: [ArtistsController, AlbumsController, TracksController],
+  controllers: [
+    ArtistsController,
+    AlbumsController,
+    TracksController,
+    UsersController,
+  ],
   providers: [],
 })
 export class AppModule {}
