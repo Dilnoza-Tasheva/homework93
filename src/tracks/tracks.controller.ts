@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -13,6 +14,8 @@ import { Track, TrackDocument } from '../schemas/track.schema';
 import { Album, AlbumDocument } from '../schemas/album.schema';
 import { Artist, ArtistDocument } from '../schemas/artist.schema';
 import { CreateTrackDto } from './create-track.dto';
+import { TokenAuthGuard } from '../auth/token-auth.guard';
+import { RoleGuard } from '../auth/role-auth.guard';
 
 @Controller()
 export class TracksController {
@@ -31,6 +34,7 @@ export class TracksController {
   async getByAlbum(@Param('albumId') albumId: string) {
     const album = await this.albumModel.findById(albumId);
     if (!album) throw new NotFoundException('Album not found');
+
     return this.trackModel
       .find({ album: albumId })
       .populate('artist')
@@ -38,6 +42,7 @@ export class TracksController {
   }
 
   @Post('tracks')
+  @UseGuards(TokenAuthGuard)
   async create(@Body() dto: CreateTrackDto) {
     const album = await this.albumModel.findById(dto.album);
     if (!album) throw new NotFoundException('Album not found');
@@ -56,6 +61,7 @@ export class TracksController {
   }
 
   @Delete('tracks/:id')
+  @UseGuards(TokenAuthGuard, RoleGuard('admin'))
   async remove(@Param('id') id: string) {
     const res = await this.trackModel.findByIdAndDelete(id);
     if (!res) throw new NotFoundException('Track not found');
